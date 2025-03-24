@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterLearn - Formula Help</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax - Fixed CDN URLs -->
+    <script src="https://cdn.jsdelivr.net/npm/es6-shim@0.35.6/es6-shim.min.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax',
+                processHtmlClass: 'mathjax-process'
+            },
+            startup: {
+                pageReady: function() {
+                    return MathJax.startup.defaultPageReady().then(function() {
+                        console.log("MathJax initial typesetting complete");
+                    });
+                }
+            },
+            chtml: {
+                scale: 1.2  // Increase font size by 20%
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .formula-help-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: var(--card-background);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+        
+        .formula-help-container h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .formula-help-container h2 {
+            font-size: 22px;
+            margin: 25px 0 15px;
+            color: var(--text-color);
+        }
+        
+        .formula-help-container p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .formula-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 20px;
+        }
+        
+        .formula-section:last-child {
+            border-bottom: none;
+        }
+        
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .example-table th, .example-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .example-table th {
+            background-color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .example-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .example-table code {
+            background-color: var(--secondary-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+        }
+        
+        .back-btn i {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>BetterLearn</h1>
+            </div>
+            <nav>
+                <button onclick="window.location.href='index.html'">My Flashcards</button>
+                <button onclick="window.location.href='study.html'">Study</button>
+                <div class="theme-toggle">
+                    <label class="theme-switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider">
+                            <i class="fas fa-sun mode-icon sun-icon"></i>
+                            <i class="fas fa-moon mode-icon moon-icon"></i>
+                        </span>
+                    </label>
+                </div>
+            </nav>
+        </header>
+
+        <div class="formula-help-container">
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Flashcards</a>
+            
+            <h1>Math Formula Guide</h1>
+            <p>BetterLearn supports LaTeX math formulas in your flashcards. This guide shows you how to write common mathematical expressions.</p>
+            
+            <div class="formula-section">
+                <h2>Basic Syntax</h2>
+                <p>To write a math formula, place it between dollar signs:</p>
+                <ul>
+                    <li>For inline formulas: <code>$your formula here$</code></li>
+                    <li>For display formulas (centered): <code>$$your formula here$$</code></li>
+                </ul>
+            </div>
+            
+            <div class="formula-section">
+                <h2>Common Formulas</h2>
+                <table class="example-table">
+                    <tr>
+                        <th>Formula Type</th>
+                        <th>LaTeX Code</th>
+                        <th>Result</th>
+                    </tr>
+                    <tr>
+                        <td>Basic Equation</td>
+                        <td><code>$a^2 + b^2 = c^2$</code></td>
+                        <td>$a^2 + b^2 = c^2$</td>
+                    </tr>
+                    <tr>
+                        <td>Fractions</td>
+                        <td><code>$\frac{a}{b}$</code></td>
+                        <td>$\frac{a}{b}$</td>
+                    </tr>
+                    <tr>
+                        <td>Square Roots</td>
+                        <td><code>$\sqrt{x}$</code></td>
+                        <td>$\sqrt{x}$</td>
+                    </tr>
+                    <tr>
+                        <td>Summation</td>
+                        <td><code>$\sum_{i=1}^{n} i^2$</code></td>
+                        <td>$\sum_{i=1}^{n} i^2$</td>
+                    </tr>
+                    <tr>
+                        <td>Integral</td>
+                        <td><code>$\int_{a}^{b} f(x) dx$</code></td>
+                        <td>$\int_{a}^{b} f(x) dx$</td>
+                    </tr>
+                    <tr>
+                        <td>Limit</td>
+                        <td><code>$\lim_{x \to \infty} \frac{1}{x}$</code></td>
+                        <td>$\lim_{x \to \infty} \frac{1}{x}$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="formula-section">
+                <h2>Greek Letters</h2>
+                <table class="example-table">
+                    <tr>
+                        <th>Letter</th>
+                        <th>LaTeX Code</th>
+                        <th>Result</th>
+                    </tr>
+                    <tr>
+                        <td>Alpha</td>
+                        <td><code>$\alpha$</code></td>
+                        <td>$\alpha$</td>
+                    </tr>
+                    <tr>
+                        <td>Beta</td>
+                        <td><code>$\beta$</code></td>
+                        <td>$\beta$</td>
+                    </tr>
+                    <tr>
+                        <td>Gamma</td>
+                        <td><code>$\gamma$</code></td>
+                        <td>$\gamma$</td>
+                    </tr>
+                    <tr>
+                        <td>Delta</td>
+                        <td><code>$\delta$</code></td>
+                        <td>$\delta$</td>
+                    </tr>
+                    <tr>
+                        <td>Pi</td>
+                        <td><code>$\pi$</code></td>
+                        <td>$\pi$</td>
+                    </tr>
+                    <tr>
+                        <td>Theta</td>
+                        <td><code>$\theta$</code></td>
+                        <td>$\theta$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="formula-section">
+                <h2>Operators and Symbols</h2>
+                <table class="example-table">
+                    <tr>
+                        <th>Symbol</th>
+                        <th>LaTeX Code</th>
+                        <th>Result</th>
+                    </tr>
+                    <tr>
+                        <td>Less than or equal</td>
+                        <td><code>$\leq$</code></td>
+                        <td>$\leq$</td>
+                    </tr>
+                    <tr>
+                        <td>Greater than or equal</td>
+                        <td><code>$\geq$</code></td>
+                        <td>$\geq$</td>
+                    </tr>
+                    <tr>
+                        <td>Not equal</td>
+                        <td><code>$\neq$</code></td>
+                        <td>$\neq$</td>
+                    </tr>
+                    <tr>
+                        <td>Infinity</td>
+                        <td><code>$\infty$</code></td>
+                        <td>$\infty$</td>
+                    </tr>
+                    <tr>
+                        <td>Times</td>
+                        <td><code>$\times$</code></td>
+                        <td>$\times$</td>
+                    </tr>
+                    <tr>
+                        <td>Division</td>
+                        <td><code>$\div$</code></td>
+                        <td>$\div$</td>
+                    </tr>
+                    <tr>
+                        <td>Plus/Minus</td>
+                        <td><code>$\pm$</code></td>
+                        <td>$\pm$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="formula-section">
+                <h2>Subscripts and Superscripts</h2>
+                <table class="example-table">
+                    <tr>
+                        <th>Type</th>
+                        <th>LaTeX Code</th>
+                        <th>Result</th>
+                    </tr>
+                    <tr>
+                        <td>Superscript</td>
+                        <td><code>$x^2$</code></td>
+                        <td>$x^2$</td>
+                    </tr>
+                    <tr>
+                        <td>Subscript</td>
+                        <td><code>$x_i$</code></td>
+                        <td>$x_i$</td>
+                    </tr>
+                    <tr>
+                        <td>Both</td>
+                        <td><code>$x_i^2$</code></td>
+                        <td>$x_i^2$</td>
+                    </tr>
+                    <tr>
+                        <td>Multiple characters</td>
+                        <td><code>$x^{2a}$</code></td>
+                        <td>$x^{2a}$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="formula-section">
+                <h2>Examples of Common Math Equations</h2>
+                <table class="example-table">
+                    <tr>
+                        <th>Equation</th>
+                        <th>LaTeX Code</th>
+                        <th>Result</th>
+                    </tr>
+                    <tr>
+                        <td>Quadratic Formula</td>
+                        <td><code>$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$</code></td>
+                        <td>$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$</td>
+                    </tr>
+                    <tr>
+                        <td>Einstein's Equation</td>
+                        <td><code>$E = mc^2$</code></td>
+                        <td>$E = mc^2$</td>
+                    </tr>
+                    <tr>
+                        <td>Normal Distribution</td>
+                        <td><code>$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$</code></td>
+                        <td>$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <p>For more comprehensive information on LaTeX math syntax, check out <a href="https://en.wikibooks.org/wiki/LaTeX/Mathematics" target="_blank">the full LaTeX Math Guide</a>.</p>
+            
+            <p><strong>Note:</strong> Formulas will only appear rendered when viewing your flashcards, not while editing.</p>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Check for saved theme preference or use default
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        
+        // If the current theme is dark, check the toggle
+        if (currentTheme === 'dark') {
+            themeToggle.checked = true;
+        }
+        
+        // Listen for toggle changes
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+</body>
+</html> 

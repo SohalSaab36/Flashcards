@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterLearn - Study Mode</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax - Fixed CDN URLs -->
+    <script src="https://cdn.jsdelivr.net/npm/es6-shim@0.35.6/es6-shim.min.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax',
+                processHtmlClass: 'mathjax-process'
+            },
+            startup: {
+                pageReady: function() {
+                    return MathJax.startup.defaultPageReady().then(function() {
+                        console.log("MathJax initial typesetting complete");
+                    });
+                }
+            },
+            chtml: {
+                scale: 1.2  // Increase font size by 20%
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Additional styles specific to study page */
+        .study-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .study-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: var(--card-border);
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .flashcard-container {
+            width: 100%;
+            height: 400px;
+            -webkit-perspective: 1500px;
+            perspective: 1500px;
+            margin-bottom: 50px;
+        }
+        
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+        
+        .flashcard.flipped {
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border-radius: var(--radius);
+            font-size: 24px;
+            text-align: center;
+            overflow-y: auto;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(145deg, var(--card-gradient-start), var(--card-gradient-end));
+            border: 1px solid var(--card-border);
+            font-weight: 600;
+        }
+        
+        .flashcard-back {
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+            background: linear-gradient(145deg, var(--card-gradient-end), var(--card-gradient-start));
+            border: 1px solid var(--card-border);
+        }
+        
+        .study-controls {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 25px;
+            border-radius: var(--radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .flip-btn {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 18px;
+            padding: 15px 40px;
+        }
+        
+        .flip-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+        
+        .nav-btn {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .disabled:hover {
+            transform: none;
+        }
+        
+        .study-footer {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-text {
+            font-size: 16px;
+            color: var(--text-light);
+        }
+        
+        .controls-help {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .keyboard-shortcut {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .key {
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-family: monospace;
+            font-size: 12px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            color: var(--text-color);
+        }
+        
+        #deck-select {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        @media (max-width: 768px) {
+            .study-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .flip-btn {
+                order: -1;
+                width: 100%;
+            }
+            
+            .nav-controls {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .controls-help {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>BetterLearn</h1>
+            </div>
+            <nav>
+                <button onclick="window.location.href='index.html'">My Flashcards</button>
+                <button class="active">Study</button>
+                <div class="theme-toggle">
+                    <label class="theme-switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider">
+                            <i class="fas fa-sun mode-icon sun-icon"></i>
+                            <i class="fas fa-moon mode-icon moon-icon"></i>
+                        </span>
+                    </label>
+                </div>
+            </nav>
+        </header>
+
+        <div class="study-container">
+            <div class="study-header">
+                <h2>Study Mode</h2>
+                <div class="study-options">
+                    <select id="deck-select" class="deck-selector">
+                        <option value="all">All Cards</option>
+                        <option value="recent">Recently Added</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            
+            <div id="card-count" class="status-text">Card 1 of 10</div>
+            
+            <div class="flashcard-container">
+                <div id="flashcard" class="flashcard">
+                    <div class="flashcard-front mathjax-process">
+                        <p id="front-content">Loading...</p>
+                    </div>
+                    <div class="flashcard-back mathjax-process">
+                        <p id="back-content">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="study-controls">
+                <button id="prev-btn" class="control-btn nav-btn">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                
+                <button id="flip-btn" class="control-btn flip-btn">
+                    Flip Card
+                </button>
+                
+                <button id="next-btn" class="control-btn nav-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="study-footer">
+                <div class="controls-help">
+                    <div class="keyboard-shortcut">
+                        <span class="key">Space</span> <span>or</span> <span class="key">Enter</span> 
+                        <span>Flip card</span>
+                    </div>
+                    <div class="keyboard-shortcut">
+                        <span class="key">←</span> <span>Previous card</span>
+                    </div>
+                    <div class="keyboard-shortcut">
+                        <span class="key">→</span> <span>Next card</span>
+                    </div>
+                </div>
+                
+                <button id="back-to-cards" class="secondary-btn">
+                    Back to My Flashcards
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const flashcard = document.getElementById('flashcard');
+        const frontContent = document.getElementById('front-content');
+        const backContent = document.getElementById('back-content');
+        const flipBtn = document.getElementById('flip-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const deckSelect = document.getElementById('deck-select');
+        const progressBar = document.getElementById('progress-bar');
+        const cardCount = document.getElementById('card-count');
+        const backToCardsBtn = document.getElementById('back-to-cards');
+        
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Check for saved theme preference or use default
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        
+        // If the current theme is dark, check the toggle
+        if (currentTheme === 'dark') {
+            themeToggle.checked = true;
+        }
+        
+        // Listen for toggle changes
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Variables
+        let flashcards = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', initStudy);
+        flashcard.addEventListener('click', flipCard);
+        flipBtn.addEventListener('click', flipCard);
+        prevBtn.addEventListener('click', showPreviousCard);
+        nextBtn.addEventListener('click', showNextCard);
+        deckSelect.addEventListener('change', filterCards);
+        backToCardsBtn.addEventListener('click', () => window.location.href = 'index.html');
+        
+        // Key Events
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                flipCard();
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft') {
+                showPreviousCard();
+            } else if (e.key === 'ArrowRight') {
+                showNextCard();
+            }
+        });
+        
+        // Functions
+        function initStudy() {
+            // Load flashcards from local storage
+            flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            
+            if (flashcards.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            currentIndex = 0;
+            updateCard();
+            updateNavButtons();
+            updateProgress();
+        }
+        
+        function showEmptyState() {
+            frontContent.innerHTML = `
+                <div style="text-align: center;">
+                    <i class="fas fa-lightbulb" style="font-size: 48px; color: var(--card-border); margin-bottom: 20px;"></i>
+                    <p>No flashcards to study yet.</p>
+                    <p style="margin-top: 10px; font-size: 16px;">Create some flashcards first!</p>
+                </div>
+            `;
+            backContent.textContent = '';
+            
+            // Disable controls
+            prevBtn.classList.add('disabled');
+            nextBtn.classList.add('disabled');
+            flipBtn.classList.add('disabled');
+            
+            cardCount.textContent = 'No cards available';
+            progressBar.style.width = '0%';
+        }
+        
+        function updateCard() {
+            if (flashcards.length === 0) return;
+            
+            const card = flashcards[currentIndex];
+            
+            // Use innerHTML to properly render formulas
+            frontContent.innerHTML = card.front;
+            backContent.innerHTML = card.back;
+            
+            // Trigger MathJax to process new content
+            if (window.MathJax) {
+                try {
+                    MathJax.typesetPromise([frontContent, backContent]).catch(function (err) {
+                        console.log('MathJax error:', err);
+                    }).then(function() {
+                        console.log('MathJax typesetting complete');
+                    });
+                } catch (e) {
+                    console.error('Error processing MathJax:', e);
+                }
+            }
+            
+            // Reset flip state
+            isFlipped = false;
+            flashcard.classList.remove('flipped');
+            
+            cardCount.textContent = `Card ${currentIndex + 1} of ${flashcards.length}`;
+            updateProgress();
+        }
+        
+        function flipCard() {
+            if (flashcards.length === 0) return;
+            
+            isFlipped = !isFlipped;
+            flashcard.classList.toggle('flipped');
+            
+            // Ensure math is properly rendered on the newly visible side
+            setTimeout(function() {
+                if (isFlipped) {
+                    if (window.MathJax) {
+                        MathJax.typesetPromise([backContent]).catch(function(err) {
+                            console.log('MathJax error:', err);
+                        });
+                    }
+                } else {
+                    if (window.MathJax) {
+                        MathJax.typesetPromise([frontContent]).catch(function(err) {
+                            console.log('MathJax error:', err);
+                        });
+                    }
+                }
+            }, 100);
+        }
+        
+        function showPreviousCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+                updateNavButtons();
+            }
+        }
+        
+        function showNextCard() {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                updateCard();
+                updateNavButtons();
+            }
+        }
+        
+        function updateNavButtons() {
+            prevBtn.classList.toggle('disabled', currentIndex === 0);
+            nextBtn.classList.toggle('disabled', currentIndex === flashcards.length - 1);
+        }
+        
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / flashcards.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        function filterCards() {
+            const filterValue = deckSelect.value;
+            
+            // Get original flashcards
+            let originalCards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            
+            if (filterValue === 'recent') {
+                // Sort by date (newest first)
+                originalCards.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            
+            flashcards = originalCards;
+            
+            if (flashcards.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            // Reset to first card
+            currentIndex = 0;
+            updateCard();
+            updateNavButtons();
+        }
+    </script>
+</body>
+</html> 

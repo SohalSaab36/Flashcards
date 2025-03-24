@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterLearn</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/es6-shim@0.35.6/es6-shim.min.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax',
+                processHtmlClass: 'mathjax-process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>BetterLearn</h1>
+            </div>
+            <nav>
+                <button onclick="window.location.href='index.html'">My Flashcards</button>
+                <button onclick="window.location.href='study.html'">Study</button>
+                <div class="theme-toggle">
+                    <label class="theme-switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider">
+                            <i class="fas fa-sun mode-icon sun-icon"></i>
+                            <i class="fas fa-moon mode-icon moon-icon"></i>
+                        </span>
+                    </label>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="create-flashcard">
+                <h2>Create New Flashcard</h2>
+                <div class="formula-help">
+                    <button id="formula-help-toggle" class="help-btn">
+                        <i class="fas fa-square-root-variable"></i> Formula Help
+                    </button>
+                    <div id="formula-help-panel" class="formula-help-panel" style="display: none;">
+                        <h3>Math Formula Guide</h3>
+                        <p>Use LaTeX syntax between dollar signs: <code>$formula$</code></p>
+                        
+                        <h4>Common Examples:</h4>
+                        <ul>
+                            <li>Fractions: <code>$\frac{a}{b}$</code> → $\frac{a}{b}$</li>
+                            <li>Square root: <code>$\sqrt{x}$</code> → $\sqrt{x}$</li>
+                            <li>Powers: <code>$x^2$</code> → $x^2$</li>
+                            <li>Greek letters: <code>$\alpha, \beta, \pi$</code> → $\alpha, \beta, \pi$</li>
+                            <li>Summation: <code>$\sum_{i=1}^n x_i$</code> → $\sum_{i=1}^n x_i$</li>
+                        </ul>
+                        
+                        <p><a href="formula-help.html" target="_blank">View full guide →</a></p>
+                    </div>
+                </div>
+                <div class="card-input-container">
+                    <div class="input-group">
+                        <label for="card-front">Front:</label>
+                        <textarea id="card-front" placeholder="Enter the question or term (supports math formulas)"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="card-back">Back:</label>
+                        <textarea id="card-back" placeholder="Enter the answer or definition (supports math formulas)"></textarea>
+                    </div>
+                </div>
+                <div class="card-controls">
+                    <button id="add-card-btn" class="primary-btn">Add Card</button>
+                    <button id="clear-btn" class="secondary-btn">Clear</button>
+                </div>
+                <div class="backup-controls">
+                    <button id="export-cards" class="secondary-btn"><i class="fas fa-download"></i> Export Cards</button>
+                    <label for="import-cards-input" class="secondary-btn import-btn"><i class="fas fa-upload"></i> Import Cards</label>
+                    <input type="file" id="import-cards-input" accept=".json" style="display: none;">
+                    <button id="clear-all-cards" class="secondary-btn danger-btn"><i class="fas fa-trash-alt"></i> Clear All</button>
+                </div>
+            </section>
+
+            <section class="flashcards-list" id="flashcards-list">
+                <!-- Flashcards will be rendered here -->
+            </section>
+        </main>
+
+        <!-- Card Modal -->
+        <div id="card-modal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal">&times;</button>
+                <div class="card-container">
+                    <button id="prev-card" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <p></p>
+                            </div>
+                            <div class="card-back">
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="next-card" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <button id="flip-card" class="flip-btn">Flip Card</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        if (currentTheme === 'dark') {
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Core flashcard functionality
+        const addCardBtn = document.getElementById('add-card-btn');
+        const cardFrontInput = document.getElementById('card-front');
+        const cardBackInput = document.getElementById('card-back');
+        const clearBtn = document.getElementById('clear-btn');
+        const exportBtn = document.getElementById('export-cards');
+        const importInput = document.getElementById('import-cards-input');
+        const clearAllBtn = document.getElementById('clear-all-cards');
+        const modal = document.getElementById('card-modal');
+        const flipBtn = document.getElementById('flip-card');
+
+        // Function to process math with MathJax
+        function typeset(element) {
+            if (window.MathJax) {
+                MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
+            }
+        }
+
+        // Create flashcard
+        function createFlashcard() {
+            const front = cardFrontInput.value.trim();
+            const back = cardBackInput.value.trim();
+
+            if (!front || !back) {
+                alert('Please fill in both sides of the flashcard.');
+                return;
+            }
+
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            const newFlashcard = {
+                id: Date.now().toString(),
+                front: front,
+                back: back,
+                createdAt: new Date().toISOString()
+            };
+
+            flashcards.push(newFlashcard);
+            localStorage.setItem('flashcards', JSON.stringify(flashcards));
+
+            cardFrontInput.value = '';
+            cardBackInput.value = '';
+            renderFlashcards();
+        }
+
+        // Render flashcards
+        function renderFlashcards() {
+            const flashcardsList = document.getElementById('flashcards-list');
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+
+            if (flashcards.length === 0) {
+                flashcardsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>No flashcards yet. Create your first one above!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            flashcardsList.innerHTML = '';
+            flashcards.forEach((card, index) => {
+                const flashcardElement = document.createElement('div');
+                flashcardElement.className = 'flashcard-item mathjax-process';
+                flashcardElement.innerHTML = `
+                    <div class="flashcard-term">${card.front}</div>
+                    <div class="flashcard-peek">Click to view answer</div>
+                    <div class="card-actions">
+                        <button class="edit-card" data-id="${card.id}"><i class="fas fa-edit"></i></button>
+                        <button class="delete-card" data-id="${card.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+
+                flashcardElement.addEventListener('click', function(e) {
+                    if (!e.target.closest('.card-actions')) {
+                        showCardInModal(index);
+                    }
+                });
+
+                flashcardsList.appendChild(flashcardElement);
+            });
+
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-card').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.getAttribute('data-id');
+                    editCard(cardId);
+                });
+            });
+
+            document.querySelectorAll('.delete-card').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.getAttribute('data-id');
+                    deleteCard(cardId);
+                });
+            });
+
+            // Process math in the rendered cards
+            typeset(flashcardsList);
+        }
+
+        // Show card in modal
+        function showCardInModal(index) {
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            if (index < 0 || index >= flashcards.length) return;
+
+            const card = flashcards[index];
+            const cardFront = modal.querySelector('.card-front p');
+            const cardBack = modal.querySelector('.card-back p');
+            const cardInner = modal.querySelector('.card-inner');
+
+            cardInner.classList.remove('flipped');
+            cardFront.innerHTML = card.front;
+            cardBack.innerHTML = card.back;
+            modal.setAttribute('data-current-index', index);
+            modal.style.display = 'flex';
+
+            typeset(cardFront);
+            typeset(cardBack);
+        }
+
+        // Edit card
+        function editCard(cardId) {
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            const card = flashcards.find(card => card.id === cardId);
+            
+            if (!card) return;
+            
+            cardFrontInput.value = card.front;
+            cardBackInput.value = card.back;
+            deleteCard(cardId, false);
+            cardFrontInput.focus();
+        }
+
+        // Delete card
+        function deleteCard(cardId, showConfirm = true) {
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            const cardIndex = flashcards.findIndex(card => card.id === cardId);
+            
+            if (cardIndex === -1) return;
+            
+            if (showConfirm && !confirm('Are you sure you want to delete this flashcard?')) {
+                return;
+            }
+            
+            flashcards.splice(cardIndex, 1);
+            localStorage.setItem('flashcards', JSON.stringify(flashcards));
+            renderFlashcards();
+        }
+
+        // Event Listeners
+        addCardBtn.addEventListener('click', createFlashcard);
+        
+        clearBtn.addEventListener('click', function() {
+            cardFrontInput.value = '';
+            cardBackInput.value = '';
+        });
+
+        clearAllBtn.addEventListener('click', function() {
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            
+            if (flashcards.length === 0) {
+                alert('No flashcards to clear!');
+                return;
+            }
+            
+            const confirmClear = confirm(
+                `Are you sure you want to delete all ${flashcards.length} flashcards?\n\n` +
+                'This action cannot be undone. Consider exporting your cards before clearing.'
+            );
+            
+            if (confirmClear) {
+                localStorage.removeItem('flashcards');
+                renderFlashcards();
+                alert('All flashcards have been deleted.');
+            }
+        });
+
+        // Export functionality
+        exportBtn.addEventListener('click', function() {
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            if (flashcards.length === 0) {
+                alert('No flashcards to export!');
+                return;
+            }
+
+            const dataStr = JSON.stringify(flashcards, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flashcards.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Import functionality
+        importInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedCards = JSON.parse(e.target.result);
+                    if (!Array.isArray(importedCards)) throw new Error('Invalid format');
+
+                    const existingCards = JSON.parse(localStorage.getItem('flashcards')) || [];
+                    const allCards = [...existingCards, ...importedCards];
+                    localStorage.setItem('flashcards', JSON.stringify(allCards));
+                    renderFlashcards();
+                    alert(`Successfully imported ${importedCards.length} flashcards!`);
+                } catch (error) {
+                    alert('Error importing flashcards. Please make sure the file is valid.');
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Modal functionality
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        flipBtn.addEventListener('click', function() {
+            const cardInner = modal.querySelector('.card-inner');
+            cardInner.classList.toggle('flipped');
+        });
+
+        document.getElementById('prev-card').addEventListener('click', function() {
+            const currentIndex = parseInt(modal.getAttribute('data-current-index'));
+            if (currentIndex > 0) {
+                showCardInModal(currentIndex - 1);
+            }
+        });
+
+        document.getElementById('next-card').addEventListener('click', function() {
+            const currentIndex = parseInt(modal.getAttribute('data-current-index'));
+            const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+            if (currentIndex < flashcards.length - 1) {
+                showCardInModal(currentIndex + 1);
+            }
+        });
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFlashcards();
+        });
+
+        // Formula help panel toggle
+        const formulaHelpToggle = document.getElementById('formula-help-toggle');
+        const formulaHelpPanel = document.getElementById('formula-help-panel');
+        
+        // Toggle panel when clicking the button
+        formulaHelpToggle.addEventListener('click', function(e) {
+            const isVisible = formulaHelpPanel.style.display === 'block';
+            formulaHelpPanel.style.display = isVisible ? 'none' : 'block';
+            formulaHelpToggle.classList.toggle('active-help', !isVisible);
+            e.stopPropagation();
+        });
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (formulaHelpPanel.style.display === 'block') {
+                if (!formulaHelpPanel.contains(e.target) && e.target !== formulaHelpToggle) {
+                    formulaHelpPanel.style.display = 'none';
+                    formulaHelpToggle.classList.remove('active-help');
+                }
+            }
+        });
+        
+        // Prevent clicks inside panel from closing it
+        formulaHelpPanel.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html> 
