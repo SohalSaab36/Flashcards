@@ -1,6 +1,6 @@
-# BetterLearn - Flashcard Application
+# Introo
 
-A modern, clean web application for creating and studying with flashcards.
+Hey Its your Amritpal Singh with this new project i had been working for months on it though this is important in my learning process of html css but i generated js with AI frankly speaking its impresive :) .
 
 ## Features
 
@@ -47,10 +47,3 @@ A modern, clean web application for creating and studying with flashcards.
 - CSS3
 - JavaScript (Vanilla)
 - Local Storage API
-
-## Future Enhancements
-
-- User accounts and cloud storage
-- Spaced repetition algorithm for optimal learning
-- Export and import functionality
-- Collaborative features 
